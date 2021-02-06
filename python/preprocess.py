@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 
 imudt = 0
-num=1
+num=2
 data={}
 if os.path.exists(str(num)+".pkl"):
     f = open(str(num)+".pkl", 'rb')

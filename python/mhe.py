@@ -6,7 +6,7 @@ import tf
 import scipy.io as scio
 
 class MHE:
-    def __init__(self, tag=1):
+    def __init__(self, tag=2):
         f = open(str(tag)+"c.pkl", 'rb')
         self.data = pickle.load(f)
         f.close()
