@@ -1,8 +1,8 @@
 function f = objmhe(x, x0, u, y)
 obj = 0;
 a = 100;
-b = 2;
-c = 5;
+b = 1.2;
+c = 8;
 d = 5;
 
 dt = 0.04;
