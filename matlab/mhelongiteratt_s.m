@@ -1,6 +1,6 @@
 %% load data
 data = load('2.mat');
-lopt = 25;        %set moving horizong
+lopt = 15;        %set moving horizong
 gtd = data.gtd';
 gtd(4:6,:) = data.gtv';
 
@@ -14,24 +14,15 @@ imu(2,:) = imu(2,:) - 0.07;
 
 [b1,a1] = butter(3,0.04,'low');
 [b2,a2] = butter(4,0.2,'low');
+
 [bi,ai] = butter(3,0.1,'low');
-
-
-% lav=200;
-% 
-% mu(1:lav)=imu(2,1:lav);
-% for i = lav+1:length(imu(2,:))
-%     mu(i)= imu(2,i)-mean(imu(2,i-lav:i));
-% end
-% 
-% imu(2,:) = mu;
-
 imu(1,:) = filtfilt(bi,ai,imu(1,:));
 imu(2,:) = filtfilt(bi,ai,imu(2,:));
 imu(3,:) = filtfilt(bi,ai,imu(3,:));
-% 
-% imu(2,:) = imu(2,:) *0.5;
-% imu(3,:) = imu(3,:) *0.5;
+
+
+imu(2,:) = imu(2,:)*0.5;
+imu(3,:) = imu(3,:)*0.5;
 
 time = data.time;
 dt = 0.04;  
@@ -44,10 +35,11 @@ for i = 2:length(uwb)
 end
 vy = filtfilt(b1,a1,vy);
 % plot(vy)
+vs(:,1:lopt+2) = vy(:,1:lopt+2);
 
 %% initialize
-xt = gtd(:, 1:lopt);
-xt_imu = gtd(:, 1:lopt);
+xt = gtd(:, 1:lopt+2);
+xt_imu = gtd(:, 1:lopt+2);
 xi = xt(:, 1);
 opt_range = 1300;
 li = 0;
@@ -56,23 +48,26 @@ X = xi;
 for i = lopt+3:opt_range %length(uwb)-lopt
     disp(['Step ' , num2str(i)])
     xi = xt(:,i-lopt);
-
     t_imu = imu(:,i-lopt+1:i);
     t_uwb = uwb(i-lopt+1:i);
-    x0 = progagation(xi, t_imu, dt);
+    x0(:,1:lopt-1) = xt(:,i-lopt+1:i-1);
+    pgt = (progagation(x0(:,lopt-1), t_imu(:,end), dt));
+    x0(:,lopt) = pgt(:, end);
     x_t = progagation(xt_imu(:,i-lopt), t_imu, dt);
     xt_imu(:,i) = x_t(:,end);
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-    X = fmincon(@(x)objmhe (x, xi, t_imu, t_uwb, vy(i-lopt+1:i)),x0,[],[],[],[],[],[],[],options);
+    X = fmincon(@(x)objmhe_s (x, xi, t_imu, t_uwb, vy(i-lopt:i)),x0,[],[],[],[],[],[],[],options);
     xt(:,i) = X(:,end);
+    
     xt(1,:) = filtfilt(b2,a2,xt(1,:));
     xt(2,:) = filtfilt(b2,a2,xt(2,:));
     xt(3,:) = filtfilt(b2,a2,xt(3,:));
-
     xt(4,:) = filtfilt(b2,a2,xt(4,:));
     xt(5,:) = filtfilt(b2,a2,xt(5,:));
     xt(6,:) = filtfilt(b2,a2,xt(6,:));
+   
+    [az,el,rho] = cart2sph(xt(4, i), xt(5, i), xt(6, i));
 
+    vs(i) = rho;
 end
 
-return
