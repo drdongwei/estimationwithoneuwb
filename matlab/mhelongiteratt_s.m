@@ -9,8 +9,8 @@ gtd(3,:) = gtd(3,:)-0.3;
 
 uwb = data.uwb';
 imu = data.imu';
-imu(3,:) = imu(3,:)- mean(imu(3,:))+0.02;
-imu(2,:) = imu(2,:) - 0.07;
+imu(3,:) = imu(3,:)- 9.82;
+imu(2,:) = imu(2,:) - 0.11;
 
 [b1,a1] = butter(3,0.04,'low');
 [b2,a2] = butter(4,0.2,'low');
@@ -20,6 +20,17 @@ imu(1,:) = filtfilt(bi,ai,imu(1,:));
 imu(2,:) = filtfilt(bi,ai,imu(2,:));
 imu(3,:) = filtfilt(bi,ai,imu(3,:));
 
+
+lav=200;
+
+mu(1:lav)=imu(2,1:lav);
+for i = lav+1:length(imu(2,:))
+    mu(i)= imu(2,i)-mean(imu(2,i-lav:i));
+    mz(i)= imu(3,i)-mean(imu(3,i-lav:i));
+end
+
+imu(2,:) = mu;
+imu(3,:) = mz;
 
 imu(2,:) = imu(2,:)*0.5;
 imu(3,:) = imu(3,:)*0.5;
@@ -41,7 +52,7 @@ vs(:,1:lopt+2) = vy(:,1:lopt+2);
 xt = gtd(:, 1:lopt+2);
 xt_imu = gtd(:, 1:lopt+2);
 xi = xt(:, 1);
-opt_range = 1300;
+opt_range = 600;
 li = 0;
 du = [0,0,0]';
 X = xi;
