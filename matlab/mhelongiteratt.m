@@ -6,8 +6,10 @@ gtd(4:6,:) = data.gtv';
 
 gtd(1,:) = gtd(1,:)-0.4;
 gtd(3,:) = gtd(3,:)-0.3;
-
+att = data.att';
 uwb = data.uwb';
+uwb1 = data.uwb1';
+uwb2 = data.uwb2';
 imu = data.imu';
 imu(3,:) = imu(3,:)- mean(imu(3,:))+0.02;
 imu(2,:) = imu(2,:) - 0.07;
@@ -15,6 +17,8 @@ imu(2,:) = imu(2,:) - 0.07;
 [b1,a1] = butter(3,0.04,'low');
 [b2,a2] = butter(4,0.2,'low');
 [bi,ai] = butter(3,0.1,'low');
+
+
 
 
 % lav=200;

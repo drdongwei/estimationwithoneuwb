@@ -109,11 +109,19 @@ class Unpacker:
 	def fetchUAV_UWB(self, i=0):
 		curvea = self.data["UAV"]["/nlink_linktrack_nodeframe3"]
 		t = self.sortTimeUGV(curvea.time)
+
 		disa = [d.nodes[0].dis for d in curvea.data]
+		disb = [d.nodes[1].dis for d in curvea.data if len(d.nodes) > 1]
+		disc = [d.nodes[2].dis for d in curvea.data if len(d.nodes) > 2]
 		lta = [d.local_time for d in curvea.data]
 		sta = [d.system_time for d in curvea.data]
 		sta = np.asarray(sta)/1000.0
-		self.uwb_disuav1 = np.vstack((t, disa, lta, sta))
+		for i in range(len(disb),len(t)):
+			disb.append(0)
+		for i in range(len(disc),len(t)):
+			disc.append(0)
+
+		self.uwb_disuav1 = np.vstack((t, disa, lta, sta, disb, disc))
 		return self.uwb_disuav1
 
 	def fetchIMU(self):

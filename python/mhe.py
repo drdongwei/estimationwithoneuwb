@@ -30,6 +30,8 @@ class MHE:
         self.time = t_uwb
         self.x = np.zeros((len(t_uwb), 6))
         self.y = self.data["uwbuav"][1, :]
+        self.y1 = self.data["uwbuav"][4, :]
+        self.y2 = self.data["uwbuav"][5, :]
         self.u = np.zeros((len(t_uwb), 3))
         self.attref = np.zeros((len(t_uwb), 3))
         self.attitude = np.zeros((len(t_uwb), 3))
@@ -73,6 +75,8 @@ class MHE:
         self.gtvel[-1, :] = self.gtvel[-2, :]
         mat["time"] = t_uwb
         mat["uwb"] = self.y
+        mat["uwb1"] = self.y1
+        mat["uwb2"] = self.y2
         mat["imu"] = self.u
         mat["gtd"] = self.gtdata
         mat["gtv"] = self.gtvel
