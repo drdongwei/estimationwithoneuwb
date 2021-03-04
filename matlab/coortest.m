@@ -34,12 +34,14 @@ t = time(1:800);
 gtd1 = gtd;
 gtd2 = gtd;
 
+eth = 0.4;
+
 for i = 1:30
     for j= 1:100
-        for k = 1:80
+        for k = 1:40
             dx = -i/20.0;
             dy = (j/20.0-2.5);
-            dz = k/20.0-2;
+            dz = k/20.0-1;
             t_gtd(1,:) = gtd(1,1:800) + dx;
             t_gtd(2,:) = gtd(2,1:800) + dy;
             t_gtd(3,:) = gtd(3,1:800) + dz;
@@ -52,9 +54,19 @@ for i = 1:30
             lgd = sqrt(sum(t_gtd.^2, 1));
             lgd1 = sqrt(sum(t_gtd1.^2, 1));
             lgd2 = sqrt(sum(t_gtd2.^2, 1));
-            td = sum(abs(y(1:800)-lgd));
-            td1 = sum(abs(y1(1:800)-lgd1));
-            td2 = sum(abs(y2(1:800)-lgd2));
+            
+            er = abs(y(1:800)-lgd);
+            er = er(er<eth);
+            td = sum(er)*800/length(er);
+            
+            er = abs(y1(1:800)-lgd1);
+            er = er(er<eth);
+            td1 = sum(er)*800/length(er);
+            
+            er = abs(y2(1:800)-lgd2);
+            er = er(er<eth);
+            td2 = sum(er)*800/length(er);
+            
             if td < r1
                 r1 = td;
                 pa1 = [dx,dy,dz];

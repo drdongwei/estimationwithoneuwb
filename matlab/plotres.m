@@ -1,4 +1,5 @@
 close all;
+[bi,ai] = butter(3,0.1,'low');
 figure(1)
 plot(time(1:length(xt(1,:))),xt(1,:),'r', 'linewidth', 2)
 hold on
@@ -30,9 +31,15 @@ hold on
 plot(time(1:length(xt(2,:))),xt(5,:),'m', 'linewidth', 2)
 plot(time(1:length(xt(3,:))),xt(6,:),'b', 'linewidth', 2)
 
-plot(time(1:length(xt(1,:))),gtd(4,1:length(xt(1,:))),'r--', 'linewidth', 2)
-plot(time(1:length(xt(2,:))),gtd(5,1:length(xt(2,:))),'m--', 'linewidth', 2)
-plot(time(1:length(xt(3,:))),gtd(6,1:length(xt(3,:))),'b--', 'linewidth', 2)
+vx =filtfilt(bi,ai,gtd(4,1:length(xt(1,:))));
+vy =filtfilt(bi,ai,gtd(5,1:length(xt(1,:))));
+vz =filtfilt(bi,ai,gtd(6,1:length(xt(1,:))));
+plot(time(1:length(xt(1,:))),vx,'r--', 'linewidth', 2)
+plot(time(1:length(xt(2,:))),vy,'m--', 'linewidth', 2)
+plot(time(1:length(xt(3,:))),vz,'b--', 'linewidth', 2)
+
+xlim([0,45])
+ylim([-1.5, 1.5])
 
 % plot(time(1:length(xt(1,:))),xt_imu(4,1:length(xt(1,:))),'r--')
 % plot(time(1:length(xt(2,:))),xt_imu(5,1:length(xt(2,:))),'c--')
