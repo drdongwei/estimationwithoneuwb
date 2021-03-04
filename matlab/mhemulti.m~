@@ -1,5 +1,5 @@
 %% load data
-data = load('data/2.mat');
+data = load('d2.mat');
 lopt = 15;        %set moving horizong
 gtd = data.gtd';
 gtd(4:6,:) = data.gtv';
