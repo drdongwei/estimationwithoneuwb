@@ -1,4 +1,4 @@
-function x = progagation(x0, u, dt)
+function x = prediction(x0, u, dt)
 A = [1, 0, 0, dt, 0, 0;
      0, 1, 0, 0, dt, 0;
      0, 0, 1, 0, 0, dt,;

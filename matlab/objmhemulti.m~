@@ -47,7 +47,7 @@ t_vp = sqrt(xt(4:6,1)'*xt(4:6,1)); % v length
 for i = 1:length(u)
     xt(:, i+1) = A  *  x(:, i) + B  *  u(:, i);  % predict
     t_obj = (xt(:, i) - x(:, i))' * (xt(:, i) - x(:, i)); % temp save
-    obj = obj + gamma_1 * t_obj; % 1st term
+    obj = gamma_1 * t_obj; % 1st term
     lx = sqrt(x(1:3,i)' * x(1:3,i));
     d_dis(i) = (lx - y(i))^2;
     t_obj =  gamma_2 * (lx - y(i))^2;
@@ -55,21 +55,21 @@ for i = 1:length(u)
     vt = max([v(i),v1(i),v2(i)]);
 %    vt = max([v(i),v2(i)]);
 %     vt = v(i);
-%    v_dis(i) = (sqrt(x(4:6,i)'*x(4:6,i))-vt)^2;
-    t_vs = sqrt(x(4:6,i)'*x(4:6,i));
-    v_dis(i) = ((vt-t_vs)^2)*exp((vt+0.1)/(t_vs+0.1));  
+   v_dis(i) = (sqrt(x(4:6,i)'*x(4:6,i))-vt)^2;
+%     t_vs = sqrt(x(4:6,i)'*x(4:6,i));
+%     v_dis(i) = ((vt-t_vs)^2)*exp((vt+0.1)/(t_vs+0.1));  % fourth term
 %     t_vp = t_vs;
-    t_obj = d*v_dis(i);
-    obj = obj + t_obj; % 1st term + 2nd term + fourth term
+%     t_obj = d*v_dis(i);
+%     obj = obj + t_obj;
 end
 
 %  d_q = max(d_dis);
 %  v_q = max(v_dis);
 %  obj = obj + e * d_q + f * v_q;
 
-obj = obj + a* (x(:,1)-x0(:,1))'*(x(:,1)-x0(:,1)); % 1st term + 2nd term + fourth term + third term
+obj = obj + a* (x(:,1)-x0(:,1))'*(x(:,1)-x0(:,1)); % third term
 
-f = obj;  % function with regard to x
+f = obj;
 
 
 
