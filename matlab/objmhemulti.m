@@ -5,7 +5,7 @@ obj = 0;
 % gamma_3 = 100;
 % gamma_4 = 3;
 gamma_1 = 1.2/10.0;
-gamma_2 = 15/10.0;
+gamma_2 = 30/10.0;
 gamma_3 = 100.0;
 gamma_4 = 10/10.0;
 

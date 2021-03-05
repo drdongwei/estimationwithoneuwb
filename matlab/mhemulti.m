@@ -1,7 +1,7 @@
 %% load data
 clc;clear
 data = load('data/2.mat');
-lopt = 15;  % set moving horizon
+lopt = 8;  % set moving horizon
 time = data.time;
 dt = 0.04;  % sampling frequency: 25Hz
 
@@ -26,7 +26,7 @@ imu(3,:) = imu(3,:)- mean(imu(3,:))+0.02;
 imu(2,:) = imu(2,:) - 0.07;
 
 %------------- preprocessing-----------------%
-[b1,a1] = butter(3,0.04,'low');  % butterworth filter, cutoff frequency: 0.04*25 = 1Hz
+[b1,a1] = butter(2,0.04,'low');  % butterworth filter, cutoff frequency: 0.04*25 = 1Hz
 [b2,a2] = butter(4,0.2,'low'); % butterworth filter, cutoff frequency: 0.2*25 = 0.5Hz
 [bi,ai] = butter(3,0.1,'low'); % butterworth filter, cutoff frequency: 0.1*25 = 0.25Hz
 
@@ -52,12 +52,13 @@ imu(2,:) = imu(2,:) - 0.07;
 %p = parpool('local',6);
 %------------- preprocessing-----------------%
 %% initialize
-xt = gtd(:, 1:lopt+2); % record estimation by MHE
-xt_imu = gtd(:, 1:lopt+2); %?
+delta = 10;
+xt = gtd(:, 1:lopt+delta); % record estimation by MHE
+xt_imu = gtd(:, 1:lopt+delta); %?
 xi = xt(:, 1); % \hat{x}_0, use visual estimation as initial, and then use the MHE estimate
 opt_range = 1300;
 X = xi;
-for i = lopt+3:opt_range  % i: current time-step
+for i = lopt+delta+1:opt_range  % i: current time-step
     
     % calculate current ranging measurements & radical velocity, i-th
     yt = filtfilt(b1,a1,uwb(1:i));
