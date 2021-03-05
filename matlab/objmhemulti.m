@@ -26,7 +26,6 @@ A = [1, 0, 0, dt, 0, 0;
      0,  0, dt;];
 
 xt(:,1) = x0;
-% t_vp = sqrt(xt(4:6,1)'*xt(4:6,1)); % v length
 
 for i = 1:length(u)
     xt(:, i+1) = A  *  x(:, i) + B  *  u(:, i);  % predict
@@ -62,7 +61,7 @@ for i = 1:length(u)
     %% velocity   
 %     vt = max([v(i),v1(i),v2(i)]);
 %    vt = max([v(i),v2(i)]);
-       vt = v(i);
+     vt = v(i);
     t_vs = sqrt(x(4:6,i)'*x(4:6,i));
     v_dis(i) = ((vt-t_vs)^2)*exp((vt+0.1)/(t_vs+0.1));  
     t_obj = gamma_4*v_dis(i);
