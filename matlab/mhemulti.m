@@ -48,19 +48,18 @@ imu(2,:) = imu(2,:) - 0.07;
     vy = filtfilt(b1,a1,vy);
     vy1 = filtfilt(b1,a1,vy1);
     vy2 = filtfilt(b1,a1,vy2);
-    
+
+%p = parpool('local',6);
 %------------- preprocessing-----------------%
 %% initialize
-xt = gtd(:, 1:lopt+2); % estimation by MHE
+xt = gtd(:, 1:lopt+2); % record estimation by MHE
 xt_imu = gtd(:, 1:lopt+2); %?
 xi = xt(:, 1); % \hat{x}_0, use visual estimation as initial, and then use the MHE estimate
 opt_range = 1300;
-li = 0;
-du = [0,0,0]';
 X = xi;
-for i = lopt+3:opt_range  % length(uwb)-lopt
+for i = lopt+3:opt_range  % i: current time-step
     
-% calculate current ranging measurements & radical velocity, i-th
+    % calculate current ranging measurements & radical velocity, i-th
     yt = filtfilt(b1,a1,uwb(1:i));
     y(i) = yt(end);
     yt = filtfilt(b1,a1,uwb1(1:i));
@@ -76,8 +75,8 @@ for i = lopt+3:opt_range  % length(uwb)-lopt
     vy1 = filtfilt(b1,a1,vy1);
     vy2 = filtfilt(b1,a1,vy2);
     
-    disp(['Step ' , num2str(i)])
     xi = xt(:,i-lopt); % denoted as \hat{x}_0
+    disp(['Step ' , num2str(i)])
 
     % used for MHE, 15 points
     MHE_imu = imu(:,i-lopt+1:i);
@@ -88,8 +87,8 @@ for i = lopt+3:opt_range  % length(uwb)-lopt
     MHE_v1 = vy1(i-lopt+1:i);
     MHE_v2 = vy2(i-lopt+1:i);
     
-    x0 = prediction(xi, MHE_imu, dt); % as initial guess
-    x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %？
+    x0 = prediction(xi, MHE_imu, dt); % use prediction as initial guess
+    x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
     xt_imu(:,i) = x_t(:,end); %？
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
     X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
