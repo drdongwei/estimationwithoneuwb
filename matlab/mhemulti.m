@@ -75,7 +75,7 @@ for i = lopt+3:opt_range  % i: current time-step
     vy1 = filtfilt(b1,a1,vy1);
     vy2 = filtfilt(b1,a1,vy2);
     
-    xi = xt(:,i-lopt); % denoted as \hat{x}_0
+    xi = xt(:,i-lopt+1); % denoted as \hat{x}_0
     disp(['Step ' , num2str(i)])
 
     % used for MHE, 15 points
