@@ -53,9 +53,9 @@ imu(2,:) = imu(2,:) - 0.07;
 %------------- preprocessing-----------------%
 %% initialize
 delta = 10;
-xt = gtd(:, 1:lopt+delta); % record estimation by MHE
+xt = gtd(:, 1:lopt+delta); % record estimation by MHE, initial
 xt_imu = gtd(:, 1:lopt+delta); %?
-xi = xt(:, 1); % \hat{x}_0, use visual estimation as initial, and then use the MHE estimate
+xi = xt(:, delta+2); % \hat{x}_2-, use visual estimation as initial, and then use the MHE estimate
 opt_range = 1300;
 X = xi;
 for i = lopt+delta+1:opt_range  % i: current time-step
@@ -89,8 +89,9 @@ for i = lopt+delta+1:opt_range  % i: current time-step
     MHE_v2 = vy2(i-lopt+1:i);
     
     x0 = prediction(xi, MHE_imu, dt); % use prediction as initial guess
-    x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
-    xt_imu(:,i) = x_t(:,end); %？
+%     x0 = [xt(i-lopt+1,i) ];
+%     x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
+%     xt_imu(:,i) = x_t(:,end); %？
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
     X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
     xt(:,i) = X(:,end);
